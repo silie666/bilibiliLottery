@@ -337,7 +337,7 @@ func BilibliDoUpdate() {
 			}
 			respp,err := ioutil.ReadAll(rr.Body)
 			rr.Body.Close()
-			compile := regexp.MustCompile(`window.__initialState = JSON.parse\("(.+)"\);`)
+			compile := regexp.MustCompile(`window\.__initialState *= *JSON\.parse\(['"]{1}(.+)['"]{1}\);*`)
 			submatch := compile.FindAllStringSubmatch(string(respp), -1)
 			submatch[0][1] = strings.Replace(submatch[0][1], "\\", "", -1)
 			var jsonAct respdata.BilibiliActivity

@@ -36,10 +36,16 @@ func GetBilibiliUrl() map[string]interface{} {
 
 
 
-	urlConfig["DO_YIFARUHUN"] = "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/get_dynamic_detail?dynamic_id=483153463975687658"  //485011372337648035最新 483153463975687658一发入魂动态id
+	urlConfig["DO_YIFARUHUN"] = "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/get_dynamic_detail?dynamic_id=489463763067784879"  //485011372337648035最新 483153463975687658一发入魂动态id
 	urlConfig["DO_CHOUJIANG"] = "https://api.bilibili.com/x/activity/lottery/do"  //抽奖链接
 	urlConfig["DO_CHOUJIANGNUM"] = "https://api.bilibili.com/x/activity/lottery/mytimes?sid="  //查询抽奖次数
 	urlConfig["DO_CHOUJIANGNUMADD"] = "https://api.bilibili.com/x/activity/lottery/addtimes"  //增加抽奖次数
+
+
+
+	//拜年活动
+	urlConfig["DO_BNJ"] = "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/get_dynamic_detail?dynamic_id=489463763067784879"  //485011372337648035最新 483153463975687658一发入魂动态id
+
 
 
 
