@@ -24,12 +24,14 @@ type BilibiliAnio struct {
 	IsComment int
 	JsonData string `gorm:"mediumtext"`
 	Str string
+	ZhuanfaUid string
 }
 
 func (ba *BilibiliAnio) BilibiliAnioAdd(params BilibiliAnio)error  {
 	var result *gorm.DB
 	var info BilibiliAnio
-	err := mysql.Db.Where("origin_dynamic_id_str = ? and previous_dynamic_id_str = ? and  is_ok = 1", params.OriginDynamicIdStr,params.PreviousDynamicIdStr).First(&info).Error
+	//and  is_ok = 1
+	err := mysql.Db.Where("origin_dynamic_id_str = ? and previous_dynamic_id_str = ? and zhuanfa_uid = ?", params.OriginDynamicIdStr,params.PreviousDynamicIdStr,params.ZhuanfaUid).First(&info).Error
 	if errors.Is(err,gorm.ErrRecordNotFound) {
 		result = mysql.Db.Create(&params)
 		fmt.Println("添加成功")

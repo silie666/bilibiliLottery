@@ -32,7 +32,7 @@ func (bda *BilibiliDoAuto) BilibiliDoAutoEdit(params BilibiliDoAuto)error  {
 	} else {
 		params.Id = info.Id
 		params.Mid = info.Mid
-		result = mysql.Db.Updates(&params)
+		result = mysql.Db.Save(&params)
 	}
 	return result.Error
 }

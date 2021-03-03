@@ -98,6 +98,7 @@ func GetAnio() {
 				PreviousUid: v.Desc.Previous.Uid,
 				JsonData: common.JsonEncode(v),
 				Str: listCard.Item.Content,
+				ZhuanfaUid: config["BILIBILI_UID"].(string),
 			})
 			//fmt.Println("爬取成功,抽奖用户id为："+uid+"名称是")
 		}
