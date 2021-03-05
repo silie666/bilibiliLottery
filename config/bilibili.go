@@ -28,9 +28,9 @@ func GetBilibiliUrl() map[string]interface{} {
 	//urlConfig["BILIBILI_UID"] = "48137033"
 
 	//企鹅2
-	urlConfig["SESSDATA"] = "79029506%2C1630209525%2C06339%2A31"
-	urlConfig["CSRF"] = "2939daa0f71d0fa5fd9fb30a91bc767e"
-	urlConfig["BILIBILI_UID"] = "232971386"
+	//urlConfig["SESSDATA"] = "79029506%2C1630209525%2C06339%2A31"
+	//urlConfig["CSRF"] = "2939daa0f71d0fa5fd9fb30a91bc767e"
+	//urlConfig["BILIBILI_UID"] = "232971386"
 
 	//企鹅3
 	//urlConfig["SESSDATA"] = "700c0d34%2C1630145238%2Cc655b*31"

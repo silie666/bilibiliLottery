@@ -26,6 +26,7 @@ func main() {
 			strArr := [4]string{"我我我","冲啊","来了来了","爱了"}
 			rand.Seed(time.Now().UnixNano())
 			str := strArr[rand.Intn(len(strArr)-1)]   //你领到多少红包
+			str2 := strArr[rand.Intn(len(strArr)-1)]
 			var where = "is_ok = 0 and zhuanfa_uid = " + config["BILIBILI_UID"].(string)
 			data := bilibiliAnioModel.BilibiliAnioList(where)
 			for _,v := range data {
@@ -74,7 +75,7 @@ func main() {
 					} else if v.OriginType == 8{
 						types = 1
 					}
-					function.BilibiliCommentAdd(v.OriginRidStr,strconv.Itoa(types),str)
+					function.BilibiliCommentAdd(v.OriginRidStr,strconv.Itoa(types),str2)
 					if v.PreviousDynamicIdStr != v.OriginDynamicIdStr && v.PreviousDynamicIdStr != ""{
 						var types int
 						if v.PreviousType == 1 {
@@ -84,7 +85,7 @@ func main() {
 						} else if v.PreviousType == 8{
 							types = 1
 						}
-						function.BilibiliCommentAdd(v.PreviousRidStr,strconv.Itoa(types),str)
+						function.BilibiliCommentAdd(v.PreviousRidStr,strconv.Itoa(types),str2)
 					}
 					isComment = 1
 				}else{
