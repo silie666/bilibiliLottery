@@ -13,8 +13,8 @@ import (
 func main() {
 	//proxy.XiequTicker()
 
-	ticker := time.NewTicker(time.Minute * 2)
-	ticker2 := time.NewTicker(time.Minute * 30)
+	ticker := time.NewTicker(time.Minute * 5)
+	ticker2 := time.NewTicker(time.Minute * 43)
 	for {
 		select {
 		case <-ticker.C:
@@ -23,7 +23,7 @@ func main() {
 			sibide := 5 * time.Second   //延迟
 			var config = config.GetBilibiliUrl()
 			var bilibiliAnioModel model.BilibiliAnio
-			strArr := [4]string{"我我我","冲啊","来了来了","爱了"}
+			strArr := [4]string{"我我我","不错","来了来了","爱了"}
 			rand.Seed(time.Now().UnixNano())
 			str := strArr[rand.Intn(len(strArr)-1)]   //你领到多少红包
 			str2 := strArr[rand.Intn(len(strArr)-1)]
