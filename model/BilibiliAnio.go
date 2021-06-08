@@ -1,9 +1,9 @@
 package model
 
 import (
+	"bilibili/drivers/mysql"
 	"bilibili/logger"
 	"errors"
-	"bilibili/drivers/mysql"
 	"fmt"
 	"gorm.io/gorm"
 )
@@ -22,9 +22,12 @@ type BilibiliAnio struct {
 	IsModify int
 	IsRepost int
 	IsComment int
+	IsLike int
+	Bvid string
 	JsonData string `gorm:"mediumtext"`
 	Str string
 	ZhuanfaUid string
+	Ctrl string
 }
 
 func (ba *BilibiliAnio) BilibiliAnioAdd(params BilibiliAnio)error  {
@@ -40,6 +43,16 @@ func (ba *BilibiliAnio) BilibiliAnioAdd(params BilibiliAnio)error  {
 		return nil
 	}
 	return result.Error
+}
+
+func (ba *BilibiliAnio) IsBilibiliAnio(where string)bool  {
+	var info BilibiliAnio
+	err := mysql.Db.Where(where).First(&info).Error
+	if errors.Is(err,gorm.ErrRecordNotFound) {
+		return false
+	} else {
+		return true
+	}
 }
 
 

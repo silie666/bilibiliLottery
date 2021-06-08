@@ -85,6 +85,11 @@ func GetAnio() {
 		for _, v := range list.Data.Cards {
 			var listCard respdata.BilibiliSpaceHistoryCardJson
 			json.Unmarshal([]byte(v.Card), &listCard)
+
+			var extend respdata.BilibiliExtendJson
+			json.Unmarshal([]byte(v.ExtendJson),&extend)
+			ctrl,_ := json.Marshal(extend.Ctrl)
+
 			//uid := strconv.FormatInt(listCard.OriginUser.Info.Uid,10)
 			var params model.BilibiliAnio
 			params.BilibiliAnioAdd(model.BilibiliAnio{
@@ -92,6 +97,7 @@ func GetAnio() {
 				OriginRidStr : v.Desc.Origin.RidStr,
 				OriginType : v.Desc.Origin.Type,
 				OriginUid : v.Desc.Origin.Uid,
+				Bvid: v.Desc.Origin.Bvid,
 				PreviousDynamicIdStr:  v.Desc.Previous.DynamicIdStr,
 				PreviousRidStr: v.Desc.Previous.RidStr,
 				PreviousType: v.Desc.Previous.Type,
@@ -99,6 +105,7 @@ func GetAnio() {
 				JsonData: common.JsonEncode(v),
 				Str: listCard.Item.Content,
 				ZhuanfaUid: config["BILIBILI_UID"].(string),
+				Ctrl: string(ctrl),
 			})
 			//fmt.Println("爬取成功,抽奖用户id为："+uid+"名称是")
 		}
@@ -106,6 +113,7 @@ func GetAnio() {
 
 	c.OnRequest(func(r *colly.Request) {
 		fmt.Println("Visiting", r.URL)
+		fmt.Println(config["BILIBILI_UID"].(string))
 	})
 	c.OnError(func(response *colly.Response, err error) {
 		logger.LoggerToFile(err.Error())
@@ -150,7 +158,7 @@ func BilibiliModify(fid []string) {
 }
 
 //转发动态评论
-func BilibiliRepost(dynamicId,str string) {
+func BilibiliRepost(dynamicId,str,ctrl string) {
 	var config = config.GetBilibiliUrl()
 	c := colly.NewCollector()
 
@@ -173,11 +181,61 @@ func BilibiliRepost(dynamicId,str string) {
 		"content":    str,
 		"extension":  "{\"emoji_type\":1}",
 		"at_uids":    "",
-		"ctrl":       "[]",
+		"ctrl":       ctrl,
 		"csrf_token": config["CSRF"].(string),
 		"csrf":       config["CSRF"].(string),
 	})
 }
+
+//动态点赞
+func BilibiliDynamicLike(dynamic_id string) {
+	var config = config.GetBilibiliUrl()
+	c := colly.NewCollector()
+	c.OnResponse(func(response *colly.Response) {
+		var bilibiliCode respdata.BilibiliCode
+		json.Unmarshal(response.Body, &bilibiliCode)
+		if bilibiliCode.Code != 0 {
+			logger.LoggerToFile("错误：" + bilibiliCode.Message)
+			return
+		}
+		fmt.Println("点赞成功")
+	})
+	c.OnRequest(func(request *colly.Request) {
+		request.Headers.Set("cookie", "SESSDATA="+config["SESSDATA"].(string)+";buvid3="+config["BUVID3"].(string))
+		request.Headers.Set("user-agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36")
+	})
+	c.Post(config["LIKE_DYNAMIC"].(string), map[string]string{
+		"uid":    config["BILIBILI_UID"].(string),
+		"dynamic_id":    dynamic_id,
+		"up": "1",
+		"csrf":    config["CSRF"].(string),
+	})
+}
+
+//视频点赞
+func BilibiliVideoLike(bvid string) {
+	var config = config.GetBilibiliUrl()
+	c := colly.NewCollector()
+	c.OnResponse(func(response *colly.Response) {
+		var bilibiliCode respdata.BilibiliCode
+		json.Unmarshal(response.Body, &bilibiliCode)
+		if bilibiliCode.Code != 0 {
+			logger.LoggerToFile("错误：" + bilibiliCode.Message)
+			return
+		}
+		fmt.Println("点赞成功")
+	})
+	c.OnRequest(func(request *colly.Request) {
+		request.Headers.Set("cookie", "SESSDATA="+config["SESSDATA"].(string)+";buvid3="+config["BUVID3"].(string))
+		request.Headers.Set("user-agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36")
+	})
+	c.Post(config["LIKE_VIDEO"].(string), map[string]string{
+		"bvid":    bvid,
+		"like":   "1",
+		"csrf":    config["CSRF"].(string),
+	})
+}
+
 
 //图片类型动态评论
 func BilibiliCommentAdd(oid,typeStr,str string) {
@@ -202,6 +260,7 @@ func BilibiliCommentAdd(oid,typeStr,str string) {
 		"type":    typeStr,     //评论区类型
 		"message": str,
 		"plat":    "1",
+		"ordering":"heat",
 		"jsonp":   "jsonp",
 		"csrf":    config["CSRF"].(string),
 	})
@@ -209,9 +268,11 @@ func BilibiliCommentAdd(oid,typeStr,str string) {
 
 //
 func BilibiliVideoShare(uid,rid,str string) {
+
+
+
 	var config = config.GetBilibiliUrl()
 	c := colly.NewCollector()
-
 	c.OnResponse(func(response *colly.Response) {
 		var bilibiliCode respdata.BilibiliCode
 		json.Unmarshal(response.Body, &bilibiliCode)
@@ -331,7 +392,6 @@ func BilibliDoUpdate() {
 		/*获取信息*/
 		if v.Sid == "" {
 			rr,err := http.Get(v.Url)
-			fmt.Println()
 			if err != nil {
 				logger.LoggerToFile("错误："+err.Error())
 				continue
@@ -340,12 +400,30 @@ func BilibliDoUpdate() {
 			rr.Body.Close()
 			compile := regexp.MustCompile(`window\.__initialState *= *JSON\.parse\(['"]{1}(.+)['"]{1}\);*`)
 			submatch := compile.FindAllStringSubmatch(string(respp), -1)
-			submatch[0][1] = strings.Replace(submatch[0][1], "\\", "", -1)
+			if submatch == nil{
+				bilibiliDoAuto.BilibiliDoDel(v.Id)
+				logger.LoggerToFile("信息获取失败，活动网页为:"+v.Url)
+				//os.Exit(0)
+				return
+			}
+			actChar := strings.Index(submatch[0][1],"BaseInfo")
+			if actChar == -1 {
+				bilibiliDoAuto.BilibiliDoDel(v.Id)
+				logger.LoggerToFile("信息获取失败，活动网页为:"+v.Url)
+				return
+			}
+			/*过滤*/
+			submatch[0][1] = strings.Replace(submatch[0][1], "\\\"", "\"", -1)
+			submatch[0][1] = strings.Replace(submatch[0][1], "\\\\\"", "\\\"", -1)
+			/*过滤*/
+
 			var jsonAct respdata.BilibiliActivity
 			json.Unmarshal([]byte(submatch[0][1]),&jsonAct)
+
 			if jsonAct.LotteryNew == nil {
 				jsonAct.LotteryNew = jsonAct.PcLotteryNew
 			}
+
 			/*获取信息*/
 			v.Sid = jsonAct.LotteryNew[0].LotteryId
 			v.JsonData = submatch[0][1]
@@ -427,6 +505,7 @@ func BilibliDoUpdate() {
 				Sid: v.Sid,
 				Num: bilibiliChouJiangNumData.Data.Times,
 				IsModify: isModify,
+				Name: v.Name,
 			})
 			/*更新信息*/
 			fmt.Println("更新数据sid:"+v.Sid+"成功")
@@ -480,4 +559,74 @@ func BilibiliDoRun() {
 		}
 	}
 	fmt.Println("所有抽奖完毕")
+}
+
+
+//删除第二页第一条动态
+func BilibiliAutoDel() {
+
+	var config = config.GetBilibiliUrl()
+	dynamic_id := ""
+	c := colly.NewCollector()
+	c.OnResponse(func(response *colly.Response) {
+		var list respdata.BilibiliSpaceHistory
+		json.Unmarshal(response.Body, &list)
+		dynamic_id = strconv.Itoa(list.Data.NextOffset)
+	})
+
+	c.OnRequest(func(r *colly.Request) {
+		fmt.Println("Visiting", r.URL)
+		fmt.Println(config["BILIBILI_UID"].(string))
+	})
+	c.OnError(func(response *colly.Response, err error) {
+		logger.LoggerToFile(err.Error())
+	})
+	c.Visit(config["MY"].(string))
+
+
+
+	cc := colly.NewCollector()
+	cc.OnResponse(func(response *colly.Response) {
+		var bilibiliCode respdata.BilibiliCode
+		json.Unmarshal(response.Body, &bilibiliCode)
+		if bilibiliCode.Code != 0 {
+			logger.LoggerToFile("错误：" + bilibiliCode.Message)
+			return
+		}
+		fmt.Println("删除成功:",dynamic_id)
+	})
+	cc.OnRequest(func(request *colly.Request) {
+		request.Headers.Set("cookie", "SESSDATA="+config["SESSDATA"].(string))
+		request.Headers.Set("user-agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36")
+	})
+	cc.Post(config["ANIO_DEL"].(string), map[string]string{
+		"dynamic_id":    dynamic_id,
+		"csrf_token":    config["CSRF"].(string),
+	})
+}
+
+//防止过滤，发送一条普通动态
+func BilibiliOrdinary(str string) {
+	var config = config.GetBilibiliUrl()
+	c := colly.NewCollector()
+	c.OnResponse(func(response *colly.Response) {
+		var bilibiliCode respdata.BilibiliCode
+		json.Unmarshal(response.Body, &bilibiliCode)
+		if bilibiliCode.Code != 0 {
+			logger.LoggerToFile("错误：" + bilibiliCode.Message)
+			return
+		}
+		fmt.Println("发布成功")
+	})
+	c.OnRequest(func(request *colly.Request) {
+		request.Headers.Set("cookie", "SESSDATA="+config["SESSDATA"].(string))
+		request.Headers.Set("user-agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36")
+	})
+	c.Post(config["ORDINARY"].(string), map[string]string{
+		"type":    "4",
+		"content":     str,
+		"extension":    " {\"emoji_type\":1,\"from\":{\"emoji_type\":1},\"flag_cfg\":{}}",
+		"ctrl":   "[]",
+		"csrf_token":    config["CSRF"].(string),
+	})
 }

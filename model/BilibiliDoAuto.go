@@ -25,14 +25,18 @@ func (bda *BilibiliDoAuto)BilibiliDoAutoList()[]BilibiliDoAuto {
 
 func (bda *BilibiliDoAuto) BilibiliDoAutoEdit(params BilibiliDoAuto)error  {
 	var result *gorm.DB
-	var info BilibiliDoAuto
-	err := mysql.Db.Where("url = ?", params.Url).First(&info).Error
+	err := mysql.Db.Where("url = ?", params.Url).First(bda).Error
 	if errors.Is(err,gorm.ErrRecordNotFound) {
 		result = mysql.Db.Create(&params)
 	} else {
-		params.Id = info.Id
-		params.Mid = info.Mid
+		params.Id = bda.Id
+		params.Mid = bda.Mid
 		result = mysql.Db.Save(&params)
 	}
+	return result.Error
+}
+
+func (bda *BilibiliDoAuto)BilibiliDoDel(id int)error {
+	result := mysql.Db.Where("id = ?", id).Delete(bda)
 	return result.Error
 }

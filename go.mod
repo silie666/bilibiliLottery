@@ -7,10 +7,13 @@ require (
 	github.com/antchfx/htmlquery v1.2.3 // indirect
 	github.com/antchfx/xmlquery v1.3.3 // indirect
 	github.com/bitly/go-simplejson v0.5.0
+	github.com/bmizerany/assert v0.0.0-20160611221934-b7ed37b82869 // indirect
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/gocolly/colly v1.2.0
 	github.com/gomodule/redigo v2.0.0+incompatible
+	github.com/jonboulle/clockwork v0.2.2 // indirect
 	github.com/kennygrant/sanitize v1.2.4 // indirect
+	github.com/kr/pretty v0.2.1 // indirect
 	github.com/lestrrat-go/file-rotatelogs v2.4.0+incompatible
 	github.com/lestrrat-go/strftime v1.0.4 // indirect
 	github.com/pkg/errors v0.9.1 // indirect

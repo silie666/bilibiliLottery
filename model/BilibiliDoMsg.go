@@ -17,3 +17,4 @@ func (bda *BilibiliDoMsg) BilibiliDoMsgAdd(params BilibiliDoMsg)error  {
 	result = mysql.Db.Create(&params)
 	return result.Error
 }
+

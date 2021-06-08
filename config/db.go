@@ -11,7 +11,7 @@ func GetDbConfig() map[string]interface{} {
 	dbConfig["DB_PORT"] = "3306"
 	dbConfig["DB_NAME"] = "crawler"
 	dbConfig["DB_USER"] = "root"
-	dbConfig["DB_PWD"] = "123"
+	dbConfig["DB_PWD"] = "root"
 	dbConfig["DB_CHARSET"] = "utf8mb4"
 	dbConfig["DB_PREFIX"] = "sl_"
 

@@ -38,6 +38,7 @@ type BilibiliSpaceHistory struct {
 			Desc struct{
 				OrigDyIdStr string `json:"orig_dy_id_str"`  //父内容
 				Origin struct{
+					Bvid string `json:"bvid"`
 					DynamicIdStr string `json:"dynamic_id_str"`
 					RidStr string `json:"rid_str"`   //目标评论区id
 					Type int `json:"type"`
@@ -51,10 +52,20 @@ type BilibiliSpaceHistory struct {
 					Uid int `json:"uid"`    //对方uid
 				}`json:"previous"`
 			} `json:"desc"`
+			ExtendJson string `json:"extend_json"`
 		} `json:"cards"`
-
+		NextOffset int `json:"next_offset"`
 	} `json:"data"`
 	JsonData string
+}
+
+type BilibiliExtendJson struct {
+	Ctrl []struct{
+		Data string `json:"data"`
+		Length int `json:"length"`
+		Location int `json:"location"`
+		Type int `json:"type"`
+	} `json:"ctrl"`
 }
 
 type BilibiliDynamicDetail struct {
