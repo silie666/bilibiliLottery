@@ -47,7 +47,7 @@ func main() {
 				var bilibiliAnioModel model.BilibiliAnio
 				strArr := [4]string{"我我我","不错","来了来了","爱了"}
 				ordinaryArr := [3]string{"[doge][doge][doge]","[doge][doge]","[doge]"}
-				ordinaryStr := strArr[rand.Intn(len(ordinaryArr)-1)]
+				ordinaryStr := ordinaryArr[rand.Intn(len(ordinaryArr)-1)]
 				rand.Seed(time.Now().UnixNano())
 				str := strArr[rand.Intn(len(strArr)-1)]   //你领到多少红包
 				str2 := strArr[rand.Intn(len(strArr)-1)]
@@ -171,7 +171,7 @@ func main() {
 			}
 		}
 	default:
-		fmt.Println("请输入命令，-get获取抽奖列表，-dorun开始抽奖，-del删除动态，-zhuanfa开始转发动态抽奖")
+		fmt.Println("请输入命令，-get获取抽奖列表，-doupdate更新抽奖列表，-dorun开始抽奖，-del删除动态，-zhuanfa开始转发动态抽奖")
 	}
 
 
