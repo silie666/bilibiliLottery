@@ -99,6 +99,9 @@ type BilibiliActivity struct {
 	PcLotteryNew []struct{
 		LotteryId string `json:"lotteryId"`
 	}`json:"pc-lottery-new"`
+	H5LotteryV3 []struct{
+		LotteryId string `json:"lotteryId"`
+	}`json:"h5-lottery-v3"`
 }
 
 

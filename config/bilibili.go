@@ -43,7 +43,7 @@ func GetBilibiliUrl() map[string]interface{} {
 	urlConfig["DO_YIFARUHUN"] = "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/get_dynamic_detail?dynamic_id=532883838027389857"  //来自转发抽奖娘的动态id
 	urlConfig["DO_CHOUJIANG"] = "https://api.bilibili.com/x/activity/lottery/do"  //抽奖链接
 	urlConfig["DO_CHOUJIANGNUM"] = "https://api.bilibili.com/x/activity/lottery/mytimes?sid="  //查询抽奖次数
-	urlConfig["DO_CHOUJIANGNUMADD"] = "https://api.bilibili.com/x/activity/lottery/addtimes"  //增加抽奖次数
+	urlConfig["DO_CHOUJIANGNUMADD"] = "https://api.bilibili.com/x/lottery/addtimes"  //增加抽奖次数
 
 
 

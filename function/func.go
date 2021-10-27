@@ -175,6 +175,9 @@ func BilibiliRepost(dynamicId,str,ctrl string) {
 		request.Headers.Set("cookie", "SESSDATA="+config["SESSDATA"].(string))
 		request.Headers.Set("user-agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36")
 	})
+	if ctrl == "null" {
+		ctrl = "[]"
+	}
 	c.Post(config["UP_REPOST"].(string), map[string]string{
 		"uid":        config["BILIBILI_UID"].(string),
 		"dynamic_id": dynamicId, //动态id
@@ -398,23 +401,24 @@ func BilibliDoUpdate() {
 			}
 			respp,err := ioutil.ReadAll(rr.Body)
 			rr.Body.Close()
-			compile := regexp.MustCompile(`window\.__initialState *= *JSON\.parse\(['"]{1}(.+)['"]{1}\);*`)
+			//compile := regexp.MustCompile(`window\.__initialState *= *JSON\.parse\(['"]{1}(.+)['"]{1}\);*`)
+			compile := regexp.MustCompile(`window\.__initialState *= ({.+});`)
 			submatch := compile.FindAllStringSubmatch(string(respp), -1)
 			if submatch == nil{
 				bilibiliDoAuto.BilibiliDoDel(v.Id)
 				logger.LoggerToFile("信息获取失败，活动网页为:"+v.Url)
 				//os.Exit(0)
-				return
+				continue
 			}
 			actChar := strings.Index(submatch[0][1],"BaseInfo")
 			if actChar == -1 {
 				bilibiliDoAuto.BilibiliDoDel(v.Id)
 				logger.LoggerToFile("信息获取失败，活动网页为:"+v.Url)
-				return
+				continue
 			}
 			/*过滤*/
-			submatch[0][1] = strings.Replace(submatch[0][1], "\\\"", "\"", -1)
-			submatch[0][1] = strings.Replace(submatch[0][1], "\\\\\"", "\\\"", -1)
+			//submatch[0][1] = strings.Replace(submatch[0][1], "\\\"", "\"", -1)
+			//submatch[0][1] = strings.Replace(submatch[0][1], "\\\\\"", "\\\"", -1)
 			/*过滤*/
 
 			var jsonAct respdata.BilibiliActivity
@@ -423,7 +427,9 @@ func BilibliDoUpdate() {
 			if jsonAct.LotteryNew == nil {
 				jsonAct.LotteryNew = jsonAct.PcLotteryNew
 			}
-
+			if jsonAct.LotteryNew == nil {
+				jsonAct.LotteryNew = jsonAct.H5LotteryV3
+			}
 			/*获取信息*/
 			v.Sid = jsonAct.LotteryNew[0].LotteryId
 			v.JsonData = submatch[0][1]
@@ -440,13 +446,13 @@ func BilibliDoUpdate() {
 		var isModify  int
 		if v.Sid != "" {
 			if v.IsModify == 0 {
+
 				postStr := `sid=`+v.Sid+`&action_type=4&csrf=`+config["CSRF"].(string)
 				postReq,_ := http.NewRequest("POST",config["DO_CHOUJIANGNUMADD"].(string),strings.NewReader(postStr))
 				postReq.Header.Set("Content-Type","application/x-www-form-urlencoded")
 				postReq.Header.Set("cookie", "SESSDATA="+config["SESSDATA"].(string))
-				postReq.Header.Set("user-agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36")
+				//postReq.Header.Set("user-agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36")
 				postRep,_ := client.Do(postReq)
-
 				postResp,_ := ioutil.ReadAll(postRep.Body)
 				postRep.Body.Close()
 				var bilibiliGzAddCode respdata.BilibiliCode
@@ -470,7 +476,7 @@ func BilibliDoUpdate() {
 			postReqr,_ := http.NewRequest("POST",config["DO_CHOUJIANGNUMADD"].(string),strings.NewReader(postStrr))
 			postReqr.Header.Set("Content-Type","application/x-www-form-urlencoded")
 			postReqr.Header.Set("cookie", "SESSDATA="+config["SESSDATA"].(string))
-			postReqr.Header.Set("user-agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36")
+			//postReqr.Header.Set("user-agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36")
 			postRepr,_ := client.Do(postReqr)
 
 			postRespr,_ := ioutil.ReadAll(postRepr.Body)
@@ -487,7 +493,8 @@ func BilibliDoUpdate() {
 			/*增加抽奖机会*/
 
 			/*更新信息*/
-			r, _ := http.NewRequest("GET", config["DO_CHOUJIANGNUM"].(string)+v.Sid, nil)
+			r, _ := http.NewRequest("GET", config["DO_CHOUJIANGNUM"].(string)+v.Sid+"&csrf="+config["CSRF"].(string), nil)
+			r.Header.Set("Content-Type","application/x-www-form-urlencoded")
 			r.Header.Set("cookie", "SESSDATA="+config["SESSDATA"].(string))
 			r.Header.Set("user-agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36")
 			rep,_ := client.Do(r)
@@ -623,6 +630,11 @@ func BilibiliOrdinary(str string) {
 		request.Headers.Set("user-agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36")
 	})
 	c.Post(config["ORDINARY"].(string), map[string]string{
+		"dynamic_id":   "0",
+		"rid":   "0",
+		"up_choose_comment":   "0",
+		"up_close_comment":   "0",
+		"at_uids":   "",
 		"type":    "4",
 		"content":     str,
 		"extension":    " {\"emoji_type\":1,\"from\":{\"emoji_type\":1},\"flag_cfg\":{}}",
