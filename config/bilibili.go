@@ -11,7 +11,7 @@ func GetBilibiliUrl() map[string]interface{} {
 	//我
 	urlConfig["SESSDATA"] = "xxxxxxxx"   				//b站cookei SESSDATA
 	urlConfig["BUVID3"] = "xxxxxxxx"		//b站cookei BUVID3
-	urlConfig["CSRF"] = "xxxxxxxxd"						//b站cookei CSRF
+	urlConfig["CSRF"] = "xxxxxxxxd"						//b站cookei bili_jct
 	urlConfig["BILIBILI_UID"] = "xxxxxxxx"									//b站cookei BILIBILI_UID
 
 
