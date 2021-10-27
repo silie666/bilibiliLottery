@@ -2,8 +2,8 @@
 ## 活动抽奖原理是抓取up主转发抽奖娘更新的最新抽奖列表
 ## 日志报错无视就好，只要程序没中断
 
-#使用方法
-## 更改config/bilibili.go下的配置参数：SESSDATA，BUVID3，CSRF，BILIBILI_UID，ANIO，MY，更改config/db.go下的数据库
+# 使用方法
+` 更改config/bilibili.go下的配置参数：SESSDATA，BUVID3，CSRF，BILIBILI_UID，ANIO，MY，更改config/db.go下的数据库 `
 
 
 # 命令
