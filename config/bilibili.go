@@ -21,7 +21,7 @@ func GetBilibiliUrl() map[string]interface{} {
 
 
 	urlConfig["ANIO"] = "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/space_history?visitor_uid=xxxxx&host_uid=xxxxxx&offset_dynamic_id=0&need_top=1&platform=web" //对方空间 visitor_uid是自己的id,host_uid对方uid
-	urlConfig["MY"] = "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/space_history?visitor_uid=xxxx&host_uid=xxxxxx&offset_dynamic_id=0&need_top=1&platform=web" //自己空间1268950779
+	urlConfig["MY"] = "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/space_history?visitor_uid=xxxx&host_uid=xxxxxx&offset_dynamic_id=0&need_top=1&platform=web" //自己空间
 	urlConfig["UP_MODIFY"] = "https://api.bilibili.com/x/relation/modify"
 	urlConfig["UP_REPOST"] = "https://api.vc.bilibili.com/dynamic_repost/v1/dynamic_repost/repost"
 	urlConfig["USER_INFO"] = "http://api.bilibili.com/x/web-interface/nav"
