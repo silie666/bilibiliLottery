@@ -502,7 +502,7 @@ func BilibiliForward() {
 
 	rand.Seed(time.Now().UnixNano())
 	str := strArr[rand.Intn(len(strArr)-1)]
-	var where = "is_ok = 0 and forward_Uid = " + Env.GetString("cookie.uid")
+	var where = "is_ok = 0 and forward_uid = " + Env.GetString("cookie.uid")
 	data := bilibiliAnioModel.BilibiliAnioList(where)
 	for _, v := range data {
 		var isModify, isRepost, isLike, isComment int
@@ -531,12 +531,12 @@ func BilibiliForward() {
 		time.Sleep(delay)
 
 		if v.IsRepost == 0 {
-			is_false := bilibiliAnioModel.IsBilibiliAnio("origin_dynamic_id_str = " + v.OriginDynamicIdStr + " and forward_Uid = " + v.ForwardUid + " and is_repost = 1")
+			is_false := bilibiliAnioModel.IsBilibiliAnio("origin_dynamic_id_str = " + v.OriginDynamicIdStr + " and forward_uid = " + v.ForwardUid + " and is_repost = 1")
 			if !is_false {
 				BilibiliReply(strconv.Itoa(v.OriginUid), v.OriginDynamicIdStr, str)
 			}
 			if v.PreviousDynamicIdStr != v.OriginDynamicIdStr && v.PreviousDynamicIdStr != "" {
-				is_false = bilibiliAnioModel.IsBilibiliAnio("previous_dynamic_id_str = " + v.PreviousDynamicIdStr + " and forward_Uid = " + v.ForwardUid + " and is_repost = 1")
+				is_false = bilibiliAnioModel.IsBilibiliAnio("previous_dynamic_id_str = " + v.PreviousDynamicIdStr + " and forward_uid = " + v.ForwardUid + " and is_repost = 1")
 				if !is_false {
 					BilibiliReply(strconv.Itoa(v.PreviousUid), v.PreviousDynamicIdStr, str)
 				}
@@ -548,7 +548,7 @@ func BilibiliForward() {
 		time.Sleep(delay)
 
 		if v.IsComment == 0 {
-			is_false := bilibiliAnioModel.IsBilibiliAnio("origin_dynamic_id_str = " + v.OriginDynamicIdStr + " and forward_Uid = " + v.ForwardUid + " and is_comment = 1")
+			is_false := bilibiliAnioModel.IsBilibiliAnio("origin_dynamic_id_str = " + v.OriginDynamicIdStr + " and forward_uid = " + v.ForwardUid + " and is_comment = 1")
 			if !is_false {
 				var types int
 				if v.OriginType == 1 {
@@ -561,7 +561,7 @@ func BilibiliForward() {
 				BilibiliCommentAdd(v.OriginRidStr, strconv.Itoa(types), str)
 			}
 			if v.PreviousDynamicIdStr != v.OriginDynamicIdStr && v.PreviousDynamicIdStr != "" {
-				is_false := bilibiliAnioModel.IsBilibiliAnio("previous_dynamic_id_str = " + v.PreviousDynamicIdStr + " and forward_Uid = " + v.ForwardUid + " and is_comment = 1")
+				is_false := bilibiliAnioModel.IsBilibiliAnio("previous_dynamic_id_str = " + v.PreviousDynamicIdStr + " and forward_uid = " + v.ForwardUid + " and is_comment = 1")
 				if !is_false {
 					var types int
 					if v.PreviousType == 1 {
@@ -580,7 +580,7 @@ func BilibiliForward() {
 		}
 
 		if v.IsLike == 0 {
-			is_false := bilibiliAnioModel.IsBilibiliAnio("origin_dynamic_id_str = " + v.OriginDynamicIdStr + " and forward_Uid = " + v.ForwardUid + " and is_like = 1")
+			is_false := bilibiliAnioModel.IsBilibiliAnio("origin_dynamic_id_str = " + v.OriginDynamicIdStr + " and forward_uid = " + v.ForwardUid + " and is_like = 1")
 			if !is_false {
 				if v.OriginType == 1 || v.OriginType == 2 {
 					BilibiliDynamicLike(v.OriginDynamicIdStr)
@@ -589,7 +589,7 @@ func BilibiliForward() {
 				}
 			}
 			if v.PreviousDynamicIdStr != v.OriginDynamicIdStr && v.PreviousDynamicIdStr != "" {
-				is_false := bilibiliAnioModel.IsBilibiliAnio("previous_dynamic_id_str = " + v.PreviousDynamicIdStr + " and forward_Uid = " + v.ForwardUid + " and is_like = 1")
+				is_false := bilibiliAnioModel.IsBilibiliAnio("previous_dynamic_id_str = " + v.PreviousDynamicIdStr + " and forward_uid = " + v.ForwardUid + " and is_like = 1")
 				if !is_false {
 					if v.OriginType == 1 || v.OriginType == 2 {
 						BilibiliDynamicLike(v.PreviousDynamicIdStr)

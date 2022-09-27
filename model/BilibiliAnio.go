@@ -33,7 +33,7 @@ type BilibiliAnio struct {
 func (ba *BilibiliAnio) BilibiliAnioAdd(params BilibiliAnio) error {
 	var result *gorm.DB
 	var info BilibiliAnio
-	err := mysql.Db.Where("origin_dynamic_id_str = ? and previous_dynamic_id_str = ? and forward_Uid = ?", params.OriginDynamicIdStr, params.PreviousDynamicIdStr, params.ForwardUid).First(&info).Error
+	err := mysql.Db.Where("origin_dynamic_id_str = ? and previous_dynamic_id_str = ? and forward_uid = ?", params.OriginDynamicIdStr, params.PreviousDynamicIdStr, params.ForwardUid).First(&info).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		result = mysql.Db.Create(&params)
 		fmt.Println("添加成功")
