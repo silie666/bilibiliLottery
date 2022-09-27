@@ -10,12 +10,11 @@ import (
 	"time"
 )
 
-func LoggerToFile(errs string) {
-	config := config.GetBilibiliUrl()
-	fileName := config["LOGS_PATH"].(string)
-	src,err := os.OpenFile(fileName, os.O_APPEND|os.O_WRONLY, os.ModeAppend)
+func LogToFile(errs string) {
+	fileName := config.Env.GetString("log.path")
+	src, err := os.OpenFile(fileName, os.O_APPEND|os.O_WRONLY, os.ModeAppend)
 	if err != nil {
-		fmt.Println("err",err)
+		fmt.Println("err", err)
 	}
 
 	logger := logrus.New()
@@ -23,9 +22,9 @@ func LoggerToFile(errs string) {
 
 	logger.SetLevel(logrus.DebugLevel)
 
-	logWriter,err := rotatelogs.New(
+	logWriter, err := rotatelogs.New(
 		// 分割后的文件名称
-		fileName + ".%Y%m%d.log",
+		fileName+"%Y%m%d.log",
 
 		// 生成软链，指向最新日志文件
 		rotatelogs.WithLinkName(fileName),
@@ -45,12 +44,13 @@ func LoggerToFile(errs string) {
 		logrus.PanicLevel: logWriter,
 	}
 	lfHook := lfshook.NewHook(writeMap, &logrus.JSONFormatter{
-		TimestampFormat:"2006-01-02 15:04:05",
+		TimestampFormat: "2006-01-02 15:04:05",
 	})
 	logger.AddHook(lfHook)
 	startTime := time.Now()
 	logger.WithFields(logrus.Fields{
-		"start_time"  : startTime,
-		"err"      : errs,
+		"start_time": startTime,
+		"err":        errs,
 	}).Error()
+	fmt.Println(errs)
 }
