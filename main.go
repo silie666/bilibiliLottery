@@ -35,7 +35,7 @@ func main() {
 	case "-cancel-modify":
 		function.BilibiliCancelModify()
 	default:
-		fmt.Println("请输入命令，-draw开始抽奖，-del删除动态，-forward开始转发动态抽奖")
+		fmt.Println("请输入命令，-draw开始抽奖，-del删除动态，-start开始转发动态抽奖")
 	}
 
 }
