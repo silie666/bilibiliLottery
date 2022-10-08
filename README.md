@@ -40,7 +40,7 @@
 开始转盘抽奖  
 `go run main.go -draw`  
 开始转发  
-`go run main.go -forward`  
+`go run main.go -start`  
 删除动态，该功能默认删除第二页数据第一条，原因是有些抽奖工具是根据动态数量判断的，所以定期删掉一些动态  
 `go run main.go -del`  
 批量取关up，从后往前取关  
