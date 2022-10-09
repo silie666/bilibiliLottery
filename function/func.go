@@ -473,8 +473,8 @@ func BilibiliOrdinary() {
 }
 
 func BilibiliStart() {
-	ticker := time.NewTicker(time.Minute * 5)
-	ticker2 := time.NewTicker(time.Minute * 43)
+	ticker := time.NewTicker(time.Minute * Env.GetDuration("data.sync_dynamic_interval"))
+	ticker2 := time.NewTicker(time.Minute * Env.GetDuration("data.forward_interval"))
 	for {
 		select {
 		case <-ticker.C:

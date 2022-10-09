@@ -13,6 +13,8 @@
 | uid        | 自己的uid              |
 | **data**   |
 | host_uid   | ta人uid，多个uid用英文逗号隔开 |
+| sync_dynamic_interval   | 同步动态时间间隔，默认5分钟      |
+| forward_interval   | 转发动态时间间隔，默认43分钟     |
 | **mysql**  |
 | host   | 自己本地的mysql          |
 | user       | 账号                  |
