@@ -309,7 +309,8 @@ func BilibliDoUpdate() {
 		var toUid int
 		/*获取信息*/
 		if v.Sid == "" {
-			response := common.Get(v.Url, nil)
+			shortUrlRedirect := common.ShortUrlRedirect(v.Url)
+			response := common.Get(shortUrlRedirect, nil)
 			compile := regexp.MustCompile(`window\.__initialState *= ({.+});`)
 			submatch := compile.FindAllStringSubmatch(response, -1)
 			if submatch == nil {
@@ -325,12 +326,14 @@ func BilibliDoUpdate() {
 			}
 			var jsonAct respdata.BilibiliActivity
 			json.Unmarshal([]byte(submatch[0][1]), &jsonAct)
-
 			if jsonAct.LotteryNew == nil {
 				jsonAct.LotteryNew = jsonAct.PcLotteryNew
 			}
 			if jsonAct.LotteryNew == nil {
 				jsonAct.LotteryNew = jsonAct.H5LotteryV3
+			}
+			if jsonAct.LotteryNew == nil {
+				jsonAct.LotteryNew = jsonAct.PcLotteryV3
 			}
 			/*获取信息*/
 			v.Sid = jsonAct.LotteryNew[0].LotteryId

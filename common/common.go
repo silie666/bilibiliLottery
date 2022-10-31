@@ -6,6 +6,7 @@ import (
 	"bilibili/respdata"
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/bitly/go-simplejson"
 	"io"
@@ -137,6 +138,27 @@ func Post(apiUrl string, data interface{}, contentType string, cookie ...http.Co
 	}
 	response = result.String()
 	return
+}
+
+func ShortUrlRedirect(shortUrl string) string {
+	redirectCount := 0
+	client := &http.Client{CheckRedirect: func(req *http.Request, via []*http.Request) (e error) {
+		redirectCount++
+		if redirectCount == 1 {
+			return errors.New(req.URL.String())
+		}
+		return
+	}}
+	fmt.Println(redirectCount)
+	response, err := client.Get(shortUrl)
+	if err != nil {
+		if e, ok := err.(*url.Error); ok && e.Err != nil {
+			remoteUrl := e.URL
+			return remoteUrl
+		}
+	}
+	defer response.Body.Close()
+	return ""
 }
 
 func BilibiliIsError(response string) error {
