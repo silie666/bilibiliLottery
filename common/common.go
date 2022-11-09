@@ -149,7 +149,6 @@ func ShortUrlRedirect(shortUrl string) string {
 		}
 		return
 	}}
-	fmt.Println(redirectCount)
 	response, err := client.Get(shortUrl)
 	if err != nil {
 		if e, ok := err.(*url.Error); ok && e.Err != nil {
@@ -158,7 +157,7 @@ func ShortUrlRedirect(shortUrl string) string {
 		}
 	}
 	defer response.Body.Close()
-	return ""
+	return shortUrl
 }
 
 func BilibiliIsError(response string) error {

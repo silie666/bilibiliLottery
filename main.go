@@ -19,7 +19,7 @@ func main() {
 		function.BilibiliLogin()
 		break
 	case "-draw":
-		function.BilibiliGeTLuckDraw()
+		function.BilibiliGeTLuckDraw("0")
 		function.BilibliDoUpdate()
 		function.BilibiliDoRun()
 		break

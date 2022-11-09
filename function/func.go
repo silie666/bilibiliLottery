@@ -270,11 +270,11 @@ func BilibiliDo(sid string) {
 	}
 }
 
-func BilibiliGeTLuckDraw() {
+func BilibiliGeTLuckDraw(nextOffset string) {
 	mysql.Db.Where("1=1").Delete(&model.BilibiliDoAuto{})
 	query := url.Values{}
 	query.Add("host_uid", Env.GetString("data.luck_draw_uid"))
-	query.Add("offset_dynamic_id", "0")
+	query.Add("offset_dynamic_id", nextOffset)
 	query.Add("need_top", "1")
 	query.Add("platform", "web")
 	response := common.Get(Env.GetString("api.space"), query)
@@ -298,7 +298,9 @@ func BilibiliGeTLuckDraw() {
 			return
 		}
 	}
-	fmt.Println("获取列表失败")
+	nextOffset = strconv.Itoa(list.Data.NextOffset)
+	fmt.Println("获取列表失败，获取下一页" + nextOffset)
+	BilibiliGeTLuckDraw(nextOffset)
 }
 
 // 更新信息
@@ -326,14 +328,19 @@ func BilibliDoUpdate() {
 			}
 			var jsonAct respdata.BilibiliActivity
 			json.Unmarshal([]byte(submatch[0][1]), &jsonAct)
-			if jsonAct.LotteryNew == nil {
+			if len(jsonAct.LotteryNew) == 0 {
 				jsonAct.LotteryNew = jsonAct.PcLotteryNew
 			}
-			if jsonAct.LotteryNew == nil {
+			if len(jsonAct.LotteryNew) == 0 {
 				jsonAct.LotteryNew = jsonAct.H5LotteryV3
 			}
-			if jsonAct.LotteryNew == nil {
+			if len(jsonAct.LotteryNew) == 0 {
 				jsonAct.LotteryNew = jsonAct.PcLotteryV3
+			}
+			if len(jsonAct.LotteryNew) == 0 {
+				bilibiliDoAuto.BilibiliDoDel(v.Id)
+				logger.LogToFile("信息获取失败，活动网页为:" + v.Url)
+				continue
 			}
 			/*获取信息*/
 			v.Sid = jsonAct.LotteryNew[0].LotteryId
