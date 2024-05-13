@@ -49,12 +49,12 @@ func BilibiliLogin() {
 		qrcode := qrcodeTerminal.New()
 		qrcode.Get([]byte(bilibiliQRCodeData.Data.Url)).Print()
 		fmt.Println("或将此链接复制到手机B站打开:", bilibiliQRCodeData.Data.Url)
-		VerifyLogin(bilibiliQRCodeData.Data.OauthKey)
+		VerifyLogin(bilibiliQRCodeData.Data.QrcodeKey)
 	}
 }
 
 func GetQRCode() (qrcode respdata.BilibiliQRCode) {
-	response := common.Get(Env.GetString("api.login"), nil)
+	response := common.Get(Env.GetString("api.qrcode"), nil)
 	err := json.Unmarshal([]byte(response), &qrcode)
 	if err != nil {
 		panic(err)
@@ -65,18 +65,19 @@ func GetQRCode() (qrcode respdata.BilibiliQRCode) {
 	return
 }
 
-func VerifyLogin(oauthKey string) {
+func VerifyLogin(qrcodeKey string) {
 	isLogin := true
+
 	for isLogin {
 		time.Sleep(time.Second * 3)
-
+		var bilibiliLoginInfo respdata.BilibiliLoginInfo
 		params := url.Values{}
-		params.Add("oauthKey", oauthKey)
-		response := common.Post(Env.GetString("api.login_info"), params, "application/x-www-form-urlencoded")
-		jsonDecode := common.JsonDecode([]byte(response))
-		status := jsonDecode.Get("status").MustBool()
-		if status != false {
-			responseUrl, _ := jsonDecode.Get("data").Get("url").String()
+		params.Add("qrcode_key", qrcodeKey)
+		response := common.Get(Env.GetString("api.qrcode_poll"), params)
+		json.Unmarshal([]byte(response), &bilibiliLoginInfo)
+		if bilibiliLoginInfo.Data.Code == 0 {
+			responseUrl := bilibiliLoginInfo.Data.Url
+			fmt.Println(bilibiliLoginInfo)
 			loginUrl, _ := url.Parse(responseUrl)
 			Env.Set("cookie.sess_data", loginUrl.Query().Get("SESSDATA"))
 			Env.Set("cookie.csrf", loginUrl.Query().Get("bili_jct"))

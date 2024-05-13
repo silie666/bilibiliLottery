@@ -1,21 +1,35 @@
 package respdata
 
-type BilibiliQRCode struct {
-	Code    int    `json:"code"`
-	Message string `json:"message"`
-	Data    struct {
-		Url      string `json:"url"`
-		OauthKey string `json:"oauthKey"`
-	} `json:"data"`
-}
-
 type BilibiliLoginInfo struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`
+	Ttl     int    `json:"ttl"`
 	Data    struct {
-		Url string `json:"url"`
+		Url          string `json:"url"`
+		RefreshToken string `json:"refresh_token"`
+		Timestamp    int    `json:"timestamp"`
+		Code         int    `json:"code"`
+		Message      string `json:"message"`
 	} `json:"data"`
 }
+
+type BilibiliQRCode struct {
+	Code    int    `json:"code"`
+	Message string `json:"message"`
+	Ttl     int    `json:"ttl"`
+	Data    struct {
+		Url       string `json:"url"`
+		QrcodeKey string `json:"qrcode_key"`
+	} `json:"data"`
+}
+
+//type BilibiliLoginInfo struct {
+//	Code    int    `json:"code"`
+//	Message string `json:"message"`
+//	Data    struct {
+//		Url string `json:"url"`
+//	} `json:"data"`
+//}
 
 type BilibiliCode struct {
 	Code    int    `json:"code"`
